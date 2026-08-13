@@ -1,0 +1,41 @@
+Hello Kei-san,
+
+Please forgive me for being slow in replying. The issues are complex. I am trying to bring to this both my experience writing RDDs for ARRI (30, 31, 54, 55 and 61) and also my experience as the architect of a former ARRI metadata product, the ARRI Metadata Bridge. I am only a consultant for ARRI now, with a specific initial focus on getting their RDDs updated (which of course now includes conversion to SMPTE’s structured HTML), but my experiences with that former product — library and documentation — inform my response below.
+
+Here are a few areas where I am trying to gather my thoughts:
+
+Organizational issues
+
+- If this were developed into a specification, how would it be supported into the future?
+
+  + Would you want to attach it to an existing effort like OpenEXR or OpenUSD, and have the steering committee for that group manage the evolution of the ideas you have written down?
+
+  + Or are you trying to make this into something like a SMPTE engineering document such as a recommended practice?
+
+- How should the namespace of second-level sub-namespaces be administered? Let’s say the ASC wants to see framelines as a second-level sub-namespace (to take one example). Will there be a permanent organization they can go to, to say “is this a good idea” or “this may not be a good idea”? It is good to have a proposal and a recommendation; it is even better to have a well-known, well-respected vendor-independent group seen to “be in charge” of the long-term integrity of the recommendation.
+
+- When a vendor has a unique capability then it seems straightforward to make a vendor-namespace attribute. What happens when another vendor implements that capability? Would there then be two vendor-namespaced attributes that mean the same thing? Does it make sense to have a way to make vendor names deprecated in favor of vendor-independent ones, if they are truly semantically identical? 
+
+Implementation considerations
+
+- Consistency could be improved by a code base that handled cases like normalization and alias detection.
+
+  + As an example of the former, consider an attribute that might be metric in its unnamespaced standard optional OpenEXR attribute, but always or sometimes imperial in its camera-vendor-specific form. The code base could do normalization, in a consistent way, from vendor-specific to normalized form. This is what SMPTE RIS camdkit does, but there was never any goal of producing anything performant, nor of any output filetype targeting; only input normalization to an in-memory representation.
+
+  + As an example of the latter, consider a mutable attribute that had both an acq: name and an unnamespaced standard optional OpenEXR attribute that “meant the same thing" - in this case, if one wants to change the value associated with the acq: name, it should be possible to introspect the existence and name of the equivalent unnamespaced standard optional attribute, so that this second value could be changed at the same time. Without such introspection, duplicate mutable metadata values under different names will become out of sync.
+
+- A code base could provide a multiplatform library, tested using the CI infrastructure available to ASWF projects, that all ingest manufacturers could use. Write something once, test it, and encourage vendors like Colorfront, Blackmagic Design, Filmlight, Codex, etc. to use it. For those ingest manufacturers that won’t use the reference implementation, they can at least use the comprehensive unit tests that should accompany the reference implementation to verify conformance.
+
+Final notes (for now)
+
+Honestly I am impressed in the huge amount of work you and your group have put into this. My thoughts, though, are with the artist, and are centered on the problem of how to reduce their cognitive load when faced with
+- shots with elements from multiple types of cameras
+- shots with a mix of legacy and modern metadata
+- shots where different elements have gone through different ingest processes and have inconsistent names or in some cases may have had metadata dropped from some elements but not others
+
+I hope to have more comments for you, but it will likely take several days to pull them together.
+
+Finally I should emphasize that all the opinions above are my own, and shouldn’t construed as any sort of “ARRI opinion”. If you want that, it sounds as if you have already found contacts in Munich, and that’s great.
+
+All the best
+Joseph

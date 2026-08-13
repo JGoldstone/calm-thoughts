@@ -31,6 +31,7 @@ ul@
 Sketch a case for an Academy Software Foundation (ASWF) CALM project
 @ul
   recent open-sourcing of key materials
+| ASWF governance of OpenEXR, the @i lingua franca @i of DCC app workflows
 | ASWF existing relationships to DCC companies
 | ASWF continuous integration infrastructure
 | ASWF experience with competing collaborators
