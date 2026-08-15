@@ -1,27 +1,29 @@
 @document
-:title Camera and lens metadata (CALM) consistency, integrity and provenance
+:title OpenClosed predictability, consistentcy, integrity and provenance
 :author Joseph Goldstone
 :date @date@
 :leading 1
-:bottom Joseph Goldstone --- CALM consistency, integrity and provenance --- @date@
+:bottom Joseph Goldstone --- OpenClosed --- @date@
 :point_size 12
 :text
 
-@s3 Assumptions s3@
+@s1 Principles s1@
 
-The first assumption is that it's easier for artists to write portable metadata-using code, Nuke gizmos, whatever if they can use the OpenEXR standard attributes.
+Artists should be able to access standard attribute metadata even if there's no 1:1 counterpart in camera vendor metadata, whenever possible. (Obviously, if there's a 1:1 counterpart, that should be available as a standard attribute.) We call this process @i normalization i@.
 
-The second assumption is that, in the spirit of never dropping metadata on the floor, all the metadata that was present in the original content (.mxf or .mov or .mp4 clip, .ari or .dpx or .tif sequence) should be present in the frame, both to support new camera / lens / on-set extended data that's unrelated to any OpenEXR attribute but also to support metadata forensics. This includes static clip-level metadata (e.g. what show? what shot? what take?) and also, conceivably, oversampled dynamic metadata (see 'Outstanding overall issues' below).
+All vendor-provided metadata should make it to the OpenEXR file, even if it duplicates standard attribute metadata. Nothing gets dropped on the floor.
 
-@s3 Outstanding overall issues s3@
+Runtime introspection should allow artists to filter out vendor provided metadata if it is completely subsumed by standard attribute metadata. This filtering needs to be optional, on by default, but able to be turned off for forensic investigations.
 
-@s4 non-frame cadence s4@
+@s1 Outstanding overall design issues (with both OpenEXR and OpenClosed) s1@
 
-There's still no good solution to classic CG compositing happening at a frame cadence, but metadata happening not just at a global-clip or frame cadence but also at a different rate or even asynchronously. Lens metadata from Cooke samples at up to 285 samples per second. And something like camera pan data from a camera head with encoders might return values only when the encoded values differed by some amount, e.g. 1/100th of a degree.
+@s2 non-frame cadence s2@
 
-@s4 definitions not linked to normative standards s4@
+There's still no good solution to classic CG compositing happening at a frame cadence, but metadata happening not just at a global-clip or frame cadence but also at a different rate or even asynchronously. Lens metadata from Cooke samples at up to 285 samples per second. And something like camera pan data from a camera head with encoders might return values only when the encoded values differed by some amount, e.g. 1/100th of a degree -- that's not sampling, that's happenstance.
 
-And there's also a definitional issue. The OpenEXR implementation keeps definitions in two places. First, there's a source C++ header file, ImfStandardAttributes.h, in the OpenEXR library sources, and this is often taken as ground truth by people writing code against the library. Artisits, on the other hand, probably don't look at C++ source code; they look at @link https://openexr.com/en/latest/StandardAttributes.html :text the OpenEXR documentation on Standard Attributes link@. But neither the C++ source header file nor the documentation have any normative force, and, today, neither seems to reference normative documents.
+@s2 definitions not linked to normative standards s2@
+
+And there's also a definitional issue. The OpenEXR implementation keeps definitions in two places. First, there's a source C++ header file, @c ImfStandardAttributes.h c@, in the OpenEXR library sources, and this is often taken as ground truth by people writing code against the library. Artisits, on the other hand, probably don't look at C++ source code; they look at @link https://openexr.com/en/latest/StandardAttributes.html :text the OpenEXR documentation on Standard Attributes link@. But neither the C++ source header file nor the documentation have any normative force, and, today, neither seems to reference normative documents.
 
 They should. ISO allows one to search their documents' Terms and Definitions sections for free. The portal is known as the @b ISO Online Browsing Platform b@ and is @link https://www.iso.org/obp/ui :text here link@. The search box on that page can be narrowed down to Terms and Definitions using the radio buttonso above the box. Of course, given the scope of ISO's operations, one must do some nbarrowing down: a search for "focal length" returns definitions of terms containing that string from 24 different ISO documents. Ignoring standards on, @i e.g. i@, light microscopy, ultrasonic testing, nuclear reactors, @i &c i@, one is left with:
 
@@ -34,13 +36,60 @@ ul@
 
 Hmmm. This didn't go where I wanted to see it; the definition of focal length that's least related to wonky non-photographic fields is this one:
 
-@image iso_517_clause_2.4 image@
+# @image iso_517_clause_2.4 image@
 
-with this associated figure:
+# with this associated figure:
 
-@image iso_517_fig_1 image@
+# @image iso_517_fig_1 image@
 
-The right thing to do here is to communicate with Dietmar Wueller of Image Engineering, who is PL on several documents going through TC 42, to get a reference to an ISO document that would be a useful anchor for OpenEXR's ImfAttributes.h.
+The right thing to do here is to communicate with Dietmar Wueller of Image Engineering, who is PL on several documents going through TC 42, to get a reference to an ISO document that would be a useful anchor for OpenEXR's @c ImfStandardAttributes.h c@.
+
+We now return you to the main thread of this document.
+
+@s2 Vendor to standard attribute mappings, when possible s2@
+
+Including deprecated standard attributes, there are 56 standard attributes in @c ImfStandardAttributes c@ . A couple of years ago the attributes were re-grouped so that related attributes would be in close proximity in the file and here we will try and echo that.
+
+@s3 Imager s3@
+
+In the Sony proposal, metadata having to do with the sensor would be in a @c acq:imager c@ namespace, in its original, non-normalized form. 
+
+@s4 @c sensorCenterOffset c@ s4@
+
+Type: Imath:V2f
+
+Definition:
+@code
+//
+// sensorCenterOffset -- horizontal and vertical distances, in microns, of
+// the center of the light-sensitive area of the camera's sensor from a point
+// on that sensor where a sensor surface normal would intersect the center
+// of the lens mount. When compared to an image captured with a perfectly
+// centered sensor, an image where both horizontal and vertical distances
+// were positive would contain more content holding what was at the right
+// and what was at the bottom of the scene being captured.
+//
+
+IMF_STD_ATTRIBUTE_DEF (
+    sensorCenterOffset, SensorCenterOffset, IMATH_NAMESPACE::V2f)
+code@
+
+@s5 Sony derivation s5@
+
+@i I don't think there's anything in the Sony camera data that can be converted into this directly. It may be possible to tease apart the OpenTrackIO lens distortion model such that the difference between the center of the sensor and the center of the camera side of the mount, and the lens optical center and the center of the lens side of the moiunt, can be distinguished. i@
+
+@s5 ARRI derivation s5@
+
+@i Same as Sony -- there's nothing in the published RDD 55 that would cover this i@
+
+@s5 Discussion s5@
+
+This attribute exists to support the separation of camera-side and lens-side centering offsets for distortion models; in particular it exists to support the portability of a measured lens distortion model across camera bodies, so that if a camera body must be swapped, a production can immediately work rather than waiting for a new combined-camera-body-and-lens distortion measurement session, which is often an overnight process.
+
+
+
+
+
 
 
 
