@@ -40,12 +40,16 @@ Hmmm. This didn't go where I wanted to see it; the definition of focal length th
 
 # The "w" suffix is the width of the text.  The lines on the left
 #  should be trimmed by an image editing program.
-@image iso_517_clause_2.4 :width .95w @  
+@image iso_517_clause_2.4 :width .95w
+:caption Focal length formula
+@  
 
 with this associated figure:
 
 # The :width of "1s" takes the margin in the image into account.
-@image iso_517_fig_1 :width 1w @
+@image iso_517_fig_1 :width 1w
+:caption Focal length geometry
+@
 
 The right thing to do here is to communicate with Dietmar Wueller of Image Engineering, who is PL on several documents going through TC 42, to get a reference to an ISO document that would be a useful anchor for OpenEXR's @c ImfStandardAttributes.h c@.
 
