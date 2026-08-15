@@ -1,10 +1,12 @@
 @document
-:title OpenClosed predictability, consistentcy, integrity and provenance
+:title OpenClosed 
+:subtitle Predictability, consistency, integrity and provenance
 :author Joseph Goldstone
 :date @date@
 :leading 1
 :bottom Joseph Goldstone --- OpenClosed --- @date@
 :point_size 12
+:cache false
 :text
 
 @s1 Principles s1@
@@ -36,11 +38,14 @@ ul@
 
 Hmmm. This didn't go where I wanted to see it; the definition of focal length that's least related to wonky non-photographic fields is this one:
 
-# @image iso_517_clause_2.4 image@
+# The "w" suffix is the width of the text.  The lines on the left
+#  should be trimmed by an image editing program.
+@image iso_517_clause_2.4 :width .95w @  
 
-# with this associated figure:
+with this associated figure:
 
-# @image iso_517_fig_1 image@
+# The :width of "1s" takes the margin in the image into account.
+@image iso_517_fig_1 :width 1w @
 
 The right thing to do here is to communicate with Dietmar Wueller of Image Engineering, who is PL on several documents going through TC 42, to get a reference to an ISO document that would be a useful anchor for OpenEXR's @c ImfStandardAttributes.h c@.
 
