@@ -46,11 +46,13 @@ The right thing to do here is to communicate with Dietmar Wueller of Image Engin
 
 We now return you to the main thread of this document.
 
-@s2 Vendor to standard attribute mappings, when possible s2@
+@s2 Normalized mappings and pass-through attributes s2@
 
 Including deprecated standard attributes, there are 56 standard attributes in @c ImfStandardAttributes c@ . A couple of years ago the attributes were re-grouped so that related attributes would be in close proximity in the file and here we will try and echo that.
 
-@s3 Imager s3@
+For any particular area (starting below with @c imager c@)
+
+@s3 @c imager c@ s3@
 
 In the Sony proposal, metadata having to do with the sensor would be in a @c acq:imager c@ namespace, in its original, non-normalized form. 
 
@@ -70,8 +72,6 @@ Definition:
 // and what was at the bottom of the scene being captured.
 //
 
-IMF_STD_ATTRIBUTE_DEF (
-    sensorCenterOffset, SensorCenterOffset, IMATH_NAMESPACE::V2f)
 code@
 
 @s5 Sony derivation s5@
@@ -86,7 +86,9 @@ code@
 
 This attribute exists to support the separation of camera-side and lens-side centering offsets for distortion models; in particular it exists to support the portability of a measured lens distortion model across camera bodies, so that if a camera body must be swapped, a production can immediately work rather than waiting for a new combined-camera-body-and-lens distortion measurement session, which is often an overnight process.
 
+@s4 @c sensorOverallDimensions c@ s4@
 
+# and things would continue from here.
 
 
 
